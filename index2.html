@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuroCre8 - Neural Content Generation Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #0a0a0f;
+            --secondary-dark: #161622;
+            --accent-purple: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Advanced Background Effects */
+        .neural-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+            opacity: 0.4;
+        }
+
+        .neural-node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: nodeGlow 3s ease-in-out infinite alternate;
+        }
+
+        .neural-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-purple), transparent);
+            transform-origin: left center;
+            animation: connectionPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes nodeGlow {
+            0% { box-shadow: 0 0 5px var(--accent-cyan); opacity: 0.6; }
+            100% { box-shadow: 0 0 20px var(--accent-cyan); opacity: 1; }
+        }
+
+        @keyframes connectionPulse {
+            0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+            50% { opacity: 0.8; transform: scaleX(1); }
+        }
+
+        /* Advanced Header */
+        .main-header {
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            animation: logoRotate 10s linear infinite;
+        }
+
+        @keyframes logoRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-item:hover {
+            color: var(--accent-cyan);
+            background: var(--glass-bg);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--glass-bg);
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-orange));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Real-time Status Bar */
+        .status-bar {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        .status-indicator.active { background: var(--success); }
+        .status-indicator.warning { background: var(--warning); }
+        .status-indicator.processing { background: var(--accent-cyan); }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Advanced Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Emotion Analysis Panel */
+        .emotion-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .emotion-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            background-size: 200% 100%;
+            animation: gradientSlide 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientSlide {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .panel-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .emotion-icon { background: var(--accent-purple); }
+        .content-icon { background: var(--accent-pink); }
+        .blockchain-icon { background: var(--accent-green); }
+        .ai-icon { background: var(--accent-cyan); }
+
+        .panel-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .panel-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+
+        /* Emotion Visualization */
+        .emotion-display {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .emotion-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            animation: emotionPulse 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes emotionPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(99, 102, 241, 0.5); }
+        }
+
+        .emotion-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .emotion-confidence {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Advanced Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            display: block;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Content Generation Panel */
+        .content-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .content-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            min-height: 120px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            position: relative;
+        }
+
+        .content-preview::before {
+            content: 'Generated Content';
+            position: absolute;
+            top: -10px;
+            left: 1rem;
+            background: var(--secondary-dark);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .generation-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-group {
+            flex: 1;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-select, .control-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .control-select:focus, .control-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+        }
+
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .generate-btn .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Full Width Panels */
+        .full-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Blockchain Panel */
+        .blockchain-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .blockchain-stat {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .wallet-address {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin: 1rem 0;
+        }
+
+        /* DAO Governance */
+        .governance-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .proposal-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .proposal-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--accent-purple);
+        }
+
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .proposal-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .proposal-status {
+            background: var(--accent-green);
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .proposal-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .voting-progress {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, var(--success) 60%, var(--error) 60%);
+            transition: all 0.3s ease;
+        }
+
+        .voting-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .vote-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .vote-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .vote-btn.for:hover {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .vote-btn.against:hover {
+            background: var(--error);
+            border-color: var(--error);
+        }
+
+        /* NFT Marketplace */
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .nft-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .nft-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .nft-rarity {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        .nft-info {
+            padding: 1rem;
+        }
+
+        .nft-name {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .nft-price {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* AI Training Panel */
+        .training-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .metric-circle {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+        }
+
+        .circle-progress {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(var(--accent-cyan) 0deg, var(--accent-cyan) calc(var(--progress) * 3.6deg), rgba(255, 255, 255, 0.1) calc(var(--progress) * 3.6deg), rgba(255, 255, 255, 0.1) 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .circle-progress::before {
+            content: '';
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--secondary-dark);
+            position: absolute;
+        }
+
+        .circle-value {
+            position: relative;
+            z-index: 1;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .governance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .header-content {
+                padding: 0 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .nav-menu {
+                order: 3;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Neural Network Background -->
+    <div class="neural-background" id="neuralBg"></div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <div class="logo-text">NeuroCre8</div>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="#create" class="nav-item"><i class="fas fa-magic"></i> Create</a>
+                <a href="#marketplace" class="nav-item"><i class="fas fa-store"></i> Marketplace</a>
+                <a href="#governance" class="nav-item"><i class="fas fa-vote-yea"></i> DAO</a>
+            </nav>
+
+            <div class="user-profile">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div style="font-size: 0.9rem; font-weight: 600;">Neural User</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">Level 7 Creator</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Real-time Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-indicator active"></div>
+                <span><i class="fas fa-heartbeat"></i> Neural Activity: <strong id="neuralActivity">High</strong></span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator processing"></div>
+                <span><i class="fas fa-network-wired"></i> Blockchain: <strong>Synced</strong></span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator active"></div>
+                <span><i class="fas fa-robot"></i> AI Model: <strong>GPT-4 Turbo</strong></span>
+            </div>
+            <div class="status-item">
+                <div class="status-indicator warning"></div>
+                <span><i class="fas fa-coins"></i> Gas Price: <strong id="gasPrice">23 gwei</strong></span>
+            </div>
+            <div class="status-item">
+                <span><i class="fas fa-clock"></i> Session: <strong id="sessionTime">0:00</strong></span>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Emotion Analysis Panel -->
+            <div class="emotion-panel">
+                <div class="panel-header">
+                    <div class="panel-icon emotion-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div>
+                        <h2 class="panel-title">Neural Emotion Analysis</h2>
+                        <p class="panel-subtitle">Real-time emotional state detection using advanced AI</p>
+                    </div>
+                </div>
+
+                <div class="emotion-display">
+                    <div class="emotion-avatar" id="emotionAvatar">
+                        😊
+                    </div>
+                    <div class="emotion-name" id="emotionName">HAPPINESS</div>
+                    <div class="emotion-confidence">Confidence: <span id="emotionConfidence">94.7%</span></div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;" id="emotionDescription">
+                        Positive emotional state detected with high creativity potential
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-value" id="arousal">7.2</span>
+                        <span class="metric-label">Arousal Level</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="valence">8.5</span>
+                        <span class="metric-label">Valence Score</span>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-value" id="creativity">92%</span>
+                        <span class="metric-label">Creative Index</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Generation Panel -->
+            <div class="content-panel">
+                <div class="panel-header">
+                    <div class="panel-icon content-icon">
+                        <i class="fas fa-feather-alt"></i>
+                    </div>
+                    <div>
+                        <h2 class="panel-title">AI Content Generator</h2>
+                        <p class="panel-subtitle">Emotion-driven content creation powered by advanced AI</p>
+                    </div>
+                </div>
+
+                <div class="generation-controls">
+                    <div class="control-group">
+                        <label class="control-label">Content Type</label>
+                        <select class="control-select" id="contentType">
+                            <option value="article">Blog Article</option>
+                            <option value="story">Short Story</option>
+                            <option value="poem">Poetry</option>
+                            <option value="social">Social Media Post</option>
+                            <option value="script">Video Script</option>
+                            <option value="email">Email Copy</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label">Tone & Style</label>
+                        <select class="control-select" id="toneStyle">
+                            <option value="auto">Auto-Match Emotion</option>
+                            <option value="professional">Professional</option>
+                            <option value="casual">Casual</option>
+                            <option value="creative">Creative</option>
+                            <option value="persuasive">Persuasive</option>
+                            <option value="humorous">Humorous</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label class="control-label">Topic/Keywords</label>
+                    <input type="text" class="control-input" id="topicInput" placeholder="Enter topic or keywords (optional - AI will auto-suggest based on emotion)">
+                </div>
+
+                <div class="content-preview" id="contentPreview">
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+                        <i class="fas fa-magic" style="margin-right: 0.5rem;"></i>
+                        Content will appear here after generation...
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn" onclick="generateContent()">
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                    <i class="fas fa-rocket"></i> Generate Content
+                </button>
+
+                <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                    <button style="flex: 1; background: rgba(34, 197, 94, 0.2); border: 1px solid var(--success); color: var(--success); border-radius: 8px; padding: 0.5rem; cursor: pointer;" onclick="saveContent()">
+                        <i class="fas fa-save"></i> Save to IPFS
+                    </button>
+                    <button style="flex: 1; background: rgba(236, 72, 153, 0.2); border: 1px solid var(--accent-pink); color: var(--accent-pink); border-radius: 8px; padding: 0.5rem; cursor: pointer;" onclick="mintAsNFT()">
+                        <i class="fas fa-gem"></i> Mint as NFT
+                    </button>
+                    <button style="flex: 1; background: rgba(6, 182, 212, 0.2); border: 1px solid var(--accent-cyan); color: var(--accent-cyan); border-radius: 8px; padding: 0.5rem; cursor: pointer;" onclick="shareContent()">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blockchain & Web3 Identity Panel -->
+        <div class="full-panel">
+            <div class="panel-header">
+                <div class="panel-icon blockchain-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <div>
+                    <h2 class="panel-title">Web3 Identity & Blockchain Storage</h2>
+                    <p class="panel-subtitle">Decentralized data ownership and neural profile management</p>
+                </div>
+            </div>
+
+            <div class="blockchain-stats">
+                <div class="blockchain-stat">
+                    <div class="stat-icon" style="background: var(--accent-purple);">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h4 style="margin-bottom: 0.5rem;">Wallet Address</h4>
+                    <div class="wallet-address" id="walletAddress">0x742d35Cc6634C0532925a3b8A7</div>
+                    <div style="color: var(--success); font-size: 0.9rem; margin-top: 0.5rem;">
+                        <i class="fas fa-check-circle"></i> Connected & Verified
+                    </div>
+                </div>
+
+                <div class="blockchain-stat">
+                    <div class="stat-icon" style="background: var(--accent-cyan);">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h4 style="margin-bottom: 0.5rem;">IPFS Storage</h4>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-cyan); margin: 0.5rem 0;">2.3 GB</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        <strong id="ipfsFiles">847</strong> files stored<br>
+                        <strong id="emotionalProfiles">23</strong> neural profiles
+                    </div>
+                </div>
+
+                <div class="blockchain-stat">
+                    <div class="stat-icon" style="background: var(--accent-green);">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h4 style="margin-bottom: 0.5rem;">NCR8 Tokens</h4>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-green); margin: 0.5rem 0;" id="tokenBalance">1,247</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Staked: <strong id="stakedTokens">350</strong><br>
+                        Rewards: <strong id="rewardTokens">+23</strong> this week
+                    </div>
+                </div>
+
+                <div class="blockchain-stat">
+                    <div class="stat-icon" style="background: var(--accent-orange);">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <h4 style="margin-bottom: 0.5rem;">NFT Collection</h4>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent-orange); margin: 0.5rem 0;" id="nftCount">17</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                        Floor Price: <strong>0.3 BNB</strong><br>
+                        Total Value: <strong>5.1 BNB</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DAO Governance Panel -->
+        <div class="full-panel">
+            <div class="panel-header">
+                <div class="panel-icon" style="background: var(--accent-orange);">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <h2 class="panel-title">Community Governance DAO</h2>
+                    <p class="panel-subtitle">Participate in platform decisions and earn governance rewards</p>
+                </div>
+            </div>
+
+            <div class="governance-grid">
+                <div>
+                    <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-vote-yea"></i> Active Proposals
+                    </h3>
+
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <div class="proposal-title">Implement Advanced Emotion Recognition</div>
+                            <div class="proposal-status">Active</div>
+                        </div>
+                        <div class="proposal-description">
+                            Integrate micro-expression analysis and voice sentiment detection to improve emotion accuracy from 94% to 98%+. This upgrade would require 2M NCR8 tokens from treasury.
+                        </div>
+                        <div class="voting-progress">
+                            <div class="progress-bar" style="width: 75%;"></div>
+                        </div>
+                        <div class="voting-stats">
+                            <span><i class="fas fa-thumbs-up" style="color: var(--success);"></i> 1,247 For (75%)</span>
+                            <span><i class="fas fa-thumbs-down" style="color: var(--error);"></i> 413 Against (25%)</span>
+                            <span>Ends in 3 days</span>
+                        </div>
+                        <div class="vote-buttons">
+                            <button class="vote-btn for" onclick="vote('proposal1', true)">
+                                <i class="fas fa-check"></i> Vote For
+                            </button>
+                            <button class="vote-btn against" onclick="vote('proposal1', false)">
+                                <i class="fas fa-times"></i> Vote Against
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <div class="proposal-title">NFT Marketplace Fee Reduction</div>
+                            <div class="proposal-status">Active</div>
+                        </div>
+                        <div class="proposal-description">
+                            Reduce marketplace fees from 2.5% to 1.5% to encourage more creators and increase trading volume. Expected to increase activity by 40%.
+                        </div>
+                        <div class="voting-progress">
+                            <div class="progress-bar" style="width: 60%;"></div>
+                        </div>
+                        <div class="voting-stats">
+                            <span><i class="fas fa-thumbs-up" style="color: var(--success);"></i> 892 For (60%)</span>
+                            <span><i class="fas fa-thumbs-down" style="color: var(--error);"></i> 595 Against (40%)</span>
+                            <span>Ends in 5 days</span>
+                        </div>
+                        <div class="vote-buttons">
+                            <button class="vote-btn for" onclick="vote('proposal2', true)">
+                                <i class="fas fa-check"></i> Vote For
+                            </button>
+                            <button class="vote-btn against" onclick="vote('proposal2', false)">
+                                <i class="fas fa-times"></i> Vote Against
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <div class="proposal-title">Privacy Enhancement Protocol</div>
+                            <div class="proposal-status">Active</div>
+                        </div>
+                        <div class="proposal-description">
+                            Implement zero-knowledge proofs for emotional data sharing, allowing users to prove emotions without revealing raw neural data.
+                        </div>
+                        <div class="voting-progress">
+                            <div class="progress-bar" style="width: 85%;"></div>
+                        </div>
+                        <div class="voting-stats">
+                            <span><i class="fas fa-thumbs-up" style="color: var(--success);"></i> 1,543 For (85%)</span>
+                            <span><i class="fas fa-thumbs-down" style="color: var(--error);"></i> 272 Against (15%)</span>
+                            <span>Ends in 1 day</span>
+                        </div>
+                        <div class="vote-buttons">
+                            <button class="vote-btn for" onclick="vote('proposal3', true)">
+                                <i class="fas fa-check"></i> Vote For
+                            </button>
+                            <button class="vote-btn against" onclick="vote('proposal3', false)">
+                                <i class="fas fa-times"></i> Vote Against
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-chart-line"></i> Your DAO Stats
+                    </h3>
+                    
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-orange);" id="votingPower">2.7%</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Voting Power</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-purple);" id="proposalsVoted">47</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Proposals Voted</div>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--success);" id="governanceRewards">324</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">NCR8 Earned</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 1.8rem; font-weight: 700; color: var(--accent-cyan);" id="daoRank">156</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">DAO Rank</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-history"></i> Recent Activity
+                    </h4>
+                    
+                    <div class="activity-feed">
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--success);">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Voted on Emotion Recognition upgrade</div>
+                                <div class="activity-time">2 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--accent-purple);">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Created proposal for AI model improvements</div>
+                                <div class="activity-time">1 day ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--accent-orange);">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Received 23 NCR8 governance rewards</div>
+                                <div class="activity-time">2 days ago</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon" style="background: var(--accent-cyan);">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Joined "Privacy Advocates" DAO committee</div>
+                                <div class="activity-time">3 days ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFT Marketplace -->
+        <div class="full-panel">
+            <div class="panel-header">
+                <div class="panel-icon" style="background: var(--accent-pink);">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div>
+                    <h2 class="panel-title">Emotional NFT Marketplace</h2>
+                    <p class="panel-subtitle">Trade unique emotional experiences as digital collectibles</p>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <div style="display: flex; gap: 1rem;">
+                    <button style="background: var(--accent-purple); color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-fire"></i> Trending
+                    </button>
+                    <button style="background: transparent; color: var(--text-secondary); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-clock"></i> Recent
+                    </button>
+                    <button style="background: transparent; color: var(--text-secondary); border: 1px solid var(--glass-border); padding: 0.5rem 1rem; border-radius: 8px; cursor: pointer;">
+                        <i class="fas fa-chart-line"></i> Top Sales
+                    </button>
+                </div>
+                
+                <button style="background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; cursor: pointer; font-weight: 600;" onclick="mintCurrentEmotion()">
+                    <i class="fas fa-plus"></i> Mint Current Emotion
+                </button>
+            </div>
+
+            <div class="nft-grid">
+                <div class="nft-card" onclick="viewNFT('euphoria')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #ff006e, #8338ec, #3a86ff);">
+                        ✨
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #ffd60a, #ff8500);">Legendary</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Euphoric Burst #1247</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Created during peak joy moment</div>
+                        <div class="nft-price">2.3 BNB</div>
+                    </div>
+                </div>
+
+                <div class="nft-card" onclick="viewNFT('tranquil')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #06ffa5, #00d4ff, #7209b7);">
+                        🧘
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #22c55e, #059669);">Rare</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Tranquil Mind #892</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Deep meditation state captured</div>
+                        <div class="nft-price">1.7 BNB</div>
+                    </div>
+                </div>
+
+                <div class="nft-card" onclick="viewNFT('passionate')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #ff4081, #ff6ec7, #ff9a56);">
+                        🔥
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #ef4444, #dc2626);">Epic</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Passionate Fire #567</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Intense creative moment</div>
+                        <div class="nft-price">3.1 BNB</div>
+                    </div>
+                </div>
+
+                <div class="nft-card" onclick="viewNFT('melancholy')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);">
+                        🌙
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #6366f1, #4f46e5);">Rare</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Melancholic Beauty #334</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Bittersweet reflection</div>
+                        <div class="nft-price">1.9 BNB</div>
+                    </div>
+                </div>
+
+                <div class="nft-card" onclick="viewNFT('inspired')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #ffecd2, #fcb69f, #ff9a9e);">
+                        💡
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #f59e0b, #d97706);">Epic</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Creative Spark #789</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Breakthrough inspiration</div>
+                        <div class="nft-price">2.8 BNB</div>
+                    </div>
+                </div>
+
+                <div class="nft-card" onclick="viewNFT('love')">
+                    <div class="nft-image" style="background: linear-gradient(135deg, #ff758c, #ff7eb3, #fa709a);">
+                        💝
+                        <div class="nft-rarity" style="background: linear-gradient(135deg, #ec4899, #be185d);">Legendary</div>
+                    </div>
+                    <div class="nft-info">
+                        <div class="nft-name">Pure Love #123</div>
+                        <div style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 0.5rem;">Deep emotional connection</div>
+                        <div class="nft-price">4.2 BNB</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Training & Analytics -->
+        <div class="full-panel">
+            <div class="panel-header">
+                <div class="panel-icon ai-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h2 class="panel-title">AI Model Training & Analytics</h2>
+                    <p class="panel-subtitle">Continuous learning from your emotional patterns and content preferences</p>
+                </div>
+            </div>
+
+            <div class="training-metrics">
+                <div style="text-align: center;">
+                    <div class="metric-circle">
+                        <div class="circle-progress" style="--progress: 87">
+                            <span class="circle-value">87%</span>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Model Accuracy</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Personal emotion detection</div>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="metric-circle">
+                        <div class="circle-progress" style="--progress: 94">
+                            <span class="circle-value">94%</span>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Content Match</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Emotion-content alignment</div>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="metric-circle">
+                        <div class="circle-progress" style="--progress: 76">
+                            <span class="circle-value">76%</span>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">Learning Rate</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Pattern recognition growth</div>
+                </div>
+
+                <div style="text-align: center;">
+                    <div class="metric-circle">
+                        <div class="circle-progress" style="--progress: 91">
+                            <span class="circle-value">91%</span>
+                        </div>
+                    </div>
+                    <div style="font-weight: 600; margin-bottom: 0.5rem;">User Satisfaction</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Content quality rating</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-chart-bar"></i> Training Progress
+                    </h4>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem;">
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Emotional Patterns Learned</span>
+                                <span style="color: var(--accent-cyan);">2,847</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Content Pieces Analyzed</span>
+                                <span style="color: var(--accent-green);">18,394</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Neural Connections</span>
+                                <span style="color: var(--accent-purple);">847K</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Training Hours</span>
+                                <span style="color: var(--accent-orange);">156.7h</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-brain"></i> Neural Insights
+                    </h4>
+                    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem;">
+                        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">Peak Creativity Times</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Tuesday 10:00-12:00 PM, Thursday 2:00-4:00 PM</div>
+                        </div>
+                        <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">Dominant Emotions</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Happiness (34%), Focus (28%), Creativity (22%)</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 0.5rem;">Content Preferences</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Technical articles, Creative stories, Motivational posts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced emotion states with detailed neural patterns
+        const emotionStates = [
+            {
+                name: 'HAPPINESS',
+                emoji: '😊',
+                description: 'Positive emotional state detected with high creativity potential',
+                confidence: () => Math.floor(Math.random() * 8 + 92),
+                arousal: () => (Math.random() * 2 + 7).toFixed(1),
+                valence: () => (Math.random() * 1.5 + 8).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 10 + 90),
+                color: '#10b981'
+            },
+            {
+                name: 'FOCUSED',
+                emoji: '🎯',
+                description: 'Deep concentration with enhanced analytical capabilities',
+                confidence: () => Math.floor(Math.random() * 6 + 88),
+                arousal: () => (Math.random() * 1.5 + 6.5).toFixed(1),
+                valence: () => (Math.random() * 1 + 7).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 15 + 75),
+                color: '#6366f1'
+            },
+            {
+                name: 'CREATIVE',
+                emoji: '✨',
+                description: 'High creative energy with innovative thinking patterns',
+                confidence: () => Math.floor(Math.random() * 7 + 91),
+                arousal: () => (Math.random() * 2 + 8).toFixed(1),
+                valence: () => (Math.random() * 1.5 + 7.5).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 8 + 92),
+                color: '#ec4899'
+            },
+            {
+                name: 'CALM',
+                emoji: '😌',
+                description: 'Serene state with balanced neural activity',
+                confidence: () => Math.floor(Math.random() * 5 + 89),
+                arousal: () => (Math.random() * 1 + 4).toFixed(1),
+                valence: () => (Math.random() * 1 + 7).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 20 + 70),
+                color: '#06b6d4'
+            },
+            {
+                name: 'PASSIONATE',
+                emoji: '🔥',
+                description: 'Intense emotional engagement with high motivation',
+                confidence: () => Math.floor(Math.random() * 6 + 93),
+                arousal: () => (Math.random() * 1.5 + 8.5).toFixed(1),
+                valence: () => (Math.random() * 1.2 + 8.3).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 12 + 85),
+                color: '#f59e0b'
+            },
+            {
+                name: 'CONTEMPLATIVE',
+                emoji: '🤔',
+                description: 'Reflective thinking with deep processing patterns',
+                confidence: () => Math.floor(Math.random() * 7 + 86),
+                arousal: () => (Math.random() * 1.5 + 5.5).toFixed(1),
+                valence: () => (Math.random() * 1 + 6.5).toFixed(1),
+                creativity: () => Math.floor(Math.random() * 18 + 78),
+                color: '#8b5cf6'
+            }
+        ];
+
+        // Content templates for different types and emotions
+        const contentTemplates = {
+            article: {
+                HAPPINESS: [
+                    "# The Science of Joy: How Positive Emotions Transform Our Reality\n\nResearch shows that happiness isn't just a feeling—it's a powerful catalyst for success and well-being. When we experience genuine joy, our brains release dopamine and serotonin, creating a neurochemical environment that enhances creativity, problem-solving, and social connection.\n\n## Key Benefits of Cultivating Happiness:\n- Enhanced cognitive flexibility\n- Improved immune system function\n- Stronger social relationships\n- Increased resilience to stress\n\nYour current emotional state is perfectly aligned for creative breakthroughs and meaningful connections. Use this energy to tackle challenging projects or reach out to people who matter to you.",
+                    "# Riding the Wave: Maximizing Your Peak Emotional States\n\nRight now, you're experiencing what psychologists call a 'flow-adjacent state'—a condition of elevated mood that primes you for exceptional performance. This isn't just happiness; it's an optimal cognitive-emotional configuration that successful people learn to recognize and leverage.\n\n## How to Amplify This Moment:\n1. **Channel into Creation**: Your brain is currently optimized for innovative thinking\n2. **Connect with Others**: Social bonds formed in positive states are stronger\n3. **Take Calculated Risks**: Positive emotions expand our sense of possibility\n\nThis emotional peak won't last forever, so make it count!"
+                ],
+                CREATIVE: [
+                    "# The Creative Mind Unleashed: Understanding Your Innovative Flow\n\nYou're currently in what neuroscientists call the 'creative network state'—a rare alignment of brain regions that enables breakthrough thinking. Your default mode network, executive attention network, and salience network are working in perfect harmony.\n\n## What's Happening in Your Brain:\n- **Divergent Thinking**: Multiple neural pathways are simultaneously active\n- **Reduced Inhibition**: Your inner critic is temporarily quieted\n- **Enhanced Pattern Recognition**: You're seeing connections others miss\n\n## Maximize This State:\nNow is the perfect time to brainstorm, write, design, or solve complex problems. Your brain is literally rewired for innovation right now.",
+                    "# Innovation Unleashed: The Neuroscience of Creative Breakthroughs\n\nCreativity isn't magic—it's a measurable neurological state, and you're experiencing it right now. fMRI studies show that during creative flow, the brain exhibits decreased activity in the dorsolateral prefrontal cortex (your inner critic) while increasing connectivity between distant brain regions.\n\n## Your Creative Advantages Right Now:\n- **Associative Thinking**: Making unexpected connections\n- **Risk-Taking Propensity**: Willing to explore unconventional ideas\n- **Aesthetic Sensitivity**: Enhanced appreciation for beauty and novelty\n\nThis is your moment to create something extraordinary."
+                ]
+            },
+            story: {
+                HAPPINESS: [
+                    "**The Luminous Hour**\n\nMaya felt it the moment she stepped outside—that electric tingle in the air that happens when everything aligns perfectly. The morning sun painted golden streaks across the city, and for the first time in months, she felt truly alive.\n\n'Today is different,' she whispered to herself, and somehow, she knew it was true.\n\nAs she walked to the coffee shop, strangers smiled at her. The barista drew a heart in her latte foam. A child waved from a passing bus. It was as if her inner light was so bright it illuminated everyone around her.\n\n'Happiness is contagious,' her grandmother used to say. Maya finally understood what she meant.\n\nShe pulled out her phone and called her sister. 'Hey, want to do something crazy today?' she asked, grinning at her reflection in the café window.\n\nSometimes the best adventures begin with a simple feeling of joy.",
+                    "**The Joy Frequency**\n\nDr. Sarah Chen had spent years studying the neural patterns of happiness, but she had never experienced anything like this. The EEG readings from her own brain showed unprecedented synchronization—a perfect harmony of alpha and theta waves she'd only seen in the most advanced meditators.\n\nBut she wasn't meditating. She was simply... happy.\n\nIt had started that morning when she solved the equation that had puzzled her for months. The solution came not through logic or calculation, but through a sudden, intuitive flash. And with it came this overwhelming sense of rightness, of connection to something larger than herself.\n\n'This is it,' she realized, watching the patterns dance across her screen. 'This is how breakthrough discoveries happen. Not through struggle, but through joy.'\n\nShe had found the frequency of innovation—and it was beautiful."
+                ],
+                CREATIVE: [
+                    "**The Idea Thief**\n\nLila's fingers flew across the keyboard as words poured out of her like water from a broken dam. She had been staring at the blank page for hours, but now—now the story was writing itself.\n\nThe characters spoke in her mind with voices so clear she could have sworn they were real. The plot twisted in directions she never could have planned. It was as if she had tapped into some cosmic reservoir of stories, and they were all flowing through her at once.\n\n'Where do ideas come from?' her writing professor had asked.\n\nNow Lila knew: they came from moments like this, when the barriers between imagination and reality dissolved, when the mind became a pure channel for possibility.\n\nShe wrote until her coffee grew cold, until the sun set and rose again, until she had captured lightning in a bottle and called it art.\n\nThis was what it meant to be alive.",
+                    "**The Color Between Blue and Green**\n\nArtist Marcus Vale stared at his canvas, brush trembling in his hand. For weeks, he had been chasing a color that existed only in his dreams—something between blue and green, but neither. Something that held the essence of ocean spray and new leaves and hope.\n\nAnd then, in a moment of perfect clarity, he saw it.\n\nNot on his palette, not in any tube of paint, but in the space between strokes, in the conversation between colors, in the pause between heartbeats. The color wasn't something to be mixed—it was something to be discovered.\n\nHe began to paint with a fury he had never known, layering transparent glazes, building depth and mystery with each touch of the brush. The painting seemed to glow from within, as if lit by its own inner fire.\n\nWhen he finally stepped back, hours later, he gasped. There it was—the color between blue and green, shimmering on the canvas like captured magic.\n\nSome things, he realized, could only be found when you stopped looking and started feeling."
+                ]
+            },
+            poem: {
+                HAPPINESS: [
+                    "**Solar Flare**\n\nToday I am a walking sun,\nRadiating warmth to everyone,\nMy laughter echoes through the street,\nMaking strangers' hearts skip a beat.\n\nThis golden feeling in my chest\nMakes every moment feel blessed,\nAs if the universe conspired\nTo set my very soul on fire.\n\nI am electric, I am bright,\nA beacon shining through the night,\nAnd in this moment I can see\nThe magic that exists in me.\n\nSo let me burn, let me glow,\nLet all the world around me know\nThat happiness is not a fleeting thing—\nIt's the song that makes the angels sing.",
+                    "**Frequency of Light**\n\nI have found the frequency of joy—\nIt vibrates at exactly the same rate\nas hummingbird wings\nand morning dew forming on petals\nand the first laugh of a newborn child.\n\nToday I am tuned to this frequency,\nreceiving signals from every sunbeam,\nevery smile from a stranger,\nevery moment when the world\nremembers how to be beautiful.\n\nMy heart is a radio\nplaying nothing but golden songs,\nand I am dancing\nto the rhythm of existence itself,\nknowing that this feeling—\nthis perfect, luminous feeling—\nis the closest thing to magic\nwe will ever know."
+                ],
+                CREATIVE: [
+                    "**The Space Between Thoughts**\n\nIn the pause between one idea and the next,\nI find entire universes waiting—\nWorlds made of maybe and what-if,\nPopulated by characters\nwho whisper their stories\ninto the shell of my ear.\n\nI am archaeologist and architect,\nDigging up buried dreams\nand building castles from air.\nMy mind is a jazz improvisation,\nEach thought riffing off the last,\nCreating melodies that never existed\nbut always were.\n\nThis is the hour of genesis,\nWhen nothing becomes something\nbecause I dared to imagine\nthat it could.\n\nI am thunder and lightning,\nStorm and rainbow,\nThe space between thoughts\nwhere miracles are born.",
+                    "**The Alchemist's Hour**\n\nI am turning lead into gold,\nSilence into symphony,\nBlank pages into entire worlds\nwith nothing but the magic\nof believing that I can.\n\nMy thoughts are fireflies\ndancing in the darkness,\neach one carrying a spark\nof something that never was\nbut desperately wants to be.\n\nI am the bridge between\nwhat is and what could be,\nthe translator of dreams,\nthe midwife of possibility.\n\nIn this moment,\nI hold the keys to infinity\nin my paint-stained fingers,\nand every door I open\nreveals another universe\nwaiting to be born."
+                ]
+            },
+            social: {
+                HAPPINESS: [
+                    "✨ Currently radiating pure sunshine energy and I can't contain it! 🌞 You know those moments when everything just CLICKS and the world feels magical? That's right now! Sending good vibes to everyone scrolling through this feed 💫 #PositiveVibes #GoodEnergy #LifeIsBeautiful",
+                    "🚀 Happiness level: STRATOSPHERIC! There's something absolutely electric about today that has me feeling like I could conquer mountains or write symphonies or just smile until my face hurts (in the best way) ✨ What's making YOU feel incredible today? Share the joy! 🌈 #Joy #Blessed #GoodVibesOnly"
+                ],
+                CREATIVE: [
+                    "🎨 Brain.exe is running in full creative mode today! Ideas are flowing like a waterfall and I'm here for every single drop 💡✨ Currently in that magical state where everything seems possible and inspiration is hiding in every corner. Time to create something beautiful! #CreativeFlow #Inspiration #ArtisticMind",
+                    "⚡ CREATIVE LIGHTNING STRIKING! 🌩️ You know that feeling when your mind becomes a playground for ideas and suddenly you can see connections between things that seemed totally unrelated? THAT'S happening right now and it's absolutely electric! Time to ride this wave 🏄‍♀️ #Creativity #Innovation #Breakthrough"
+                ]
+            }
+        };
+
+        // Global state management
+        let currentEmotionIndex = 0;
+        let sessionStartTime = Date.now();
+        let generatedContent = [];
+        let userStats = {
+            contentGenerated: 0,
+            nftsOwned: 17,
+            tokensEarned: 1247,
+            votingPower: 2.7,
+            proposalsVoted: 47
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNeuralBackground();
+            updateEmotionalState();
+            updateSessionTimer();
+            generateRandomWallet();
+            updateGasPrice();
+            
+            // Auto-update emotion every 8 seconds
+            setInterval(updateEmotionalState, 8000);
+            
+            // Update session timer every minute
+            setInterval(updateSessionTimer, 60000);
+            
+            // Update gas price every 30 seconds
+            setInterval(updateGasPrice, 30000);
+            
+            // Update neural activity every 5 seconds
+            setInterval(updateNeuralActivity, 5000);
+        });
+
+        // Create dynamic neural network background
+        function initializeNeuralBackground() {
+            const neuralBg = document.getElementById('neuralBg');
+            
+            // Create neural nodes
+            for (let i = 0; i < 20; i++) {
+                const node = document.createElement('div');
+                node.className = 'neural-node';
+                node.style.left = Math.random() * 100 + '%';
+                node.style.top = Math.random() * 100 + '%';
+                node.style.animationDelay = Math.random() * 3 + 's';
+                neuralBg.appendChild(node);
+            }
+            
+            // Create neural connections
+            for (let i = 0; i < 15; i++) {
+                const connection = document.createElement('div');
+                connection.className = 'neural-connection';
+                connection.style.left = Math.random() * 100 + '%';
+                connection.style.top = Math.random() * 100 + '%';
+                connection.style.width = Math.random() * 200 + 100 + 'px';
+                connection.style.transform = `rotate(${Math.random() * 360}deg)`;
+                connection.style.animationDelay = Math.random() * 2 + 's';
+                neuralBg.appendChild(connection);
+            }
+        }
+
+        // Update emotional state with advanced metrics
+        function updateEmotionalState() {
+            const emotion = emotionStates[currentEmotionIndex];
+            
+            document.getElementById('emotionAvatar').textContent = emotion.emoji;
+            document.getElementById('emotionName').textContent = emotion.name;
+            document.getElementById('emotionDescription').textContent = emotion.description;
+            document.getElementById('emotionConfidence').textContent = `Confidence: ${emotion.confidence()}%`;
+            document.getElementById('arousal').textContent = emotion.arousal();
+            document.getElementById('valence').textContent = emotion.valence();
+            document.getElementById('creativity').textContent = emotion.creativity() + '%';
+            
+            // Cycle to next emotion
+            currentEmotionIndex = (currentEmotionIndex + 1) % emotionStates.length;
+        }
+
+        // Advanced content generation
+        function generateContent() {
+            const contentType = document.getElementById('contentType').value;
+            const topic = document.getElementById('topicInput').value;
+            const currentEmotion = document.getElementById('emotionName').textContent;
+            
+            const generateBtn = document.getElementById('generateBtn');
+            const spinner = document.getElementById('loadingSpinner');
+            const preview = document.getElementById('contentPreview');
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            spinner.style.display = 'inline-block';
+            generateBtn.innerHTML = '<div class="loading-spinner" style="display: inline-block;"></div> Generating...';
+            
+            // Simulate AI processing time
+            setTimeout(() => {
+                // Get appropriate template
+                const templates = contentTemplates[contentType] || contentTemplates.article;
+                const emotionTemplates = templates[currentEmotion] || templates.HAPPINESS;
+                const selectedTemplate = emotionTemplates[Math.floor(Math.random() * emotionTemplates.length)];
+                
+                // Customize based on topic if provided
+                let content = selectedTemplate;
+                if (topic && topic.trim()) {
+                    content = content.replace(/\b(project|challenge|work|task)\b/g, topic);
+                }
+                
+                // Display generated content
+                preview.innerHTML = `<pre style="white-space: pre-wrap; font-family: 'Inter', sans-serif; line-height: 1.6;">${content}</pre>`;
+                
+                // Update stats
+                userStats.contentGenerated++;
+                document.getElementById('sessionTime').textContent = Math.floor((Date.now() - sessionStartTime) / 60000) + ':' + 
+                    String(Math.floor(((Date.now() - sessionStartTime) % 60000) / 1000)).padStart(2, '0');
+                
+                // Store generated content
+                generatedContent.push({
+                    content: content,
+                    emotion: currentEmotion,
+                    type: contentType,
+                    timestamp: Date.now(),
+                    topic: topic
+                });
+                
+                // Reset button
+                generateBtn.disabled = false;
+                spinner.style.display = 'none';
+                generateBtn.innerHTML = '<i class="fas fa-rocket"></i> Generate Content';
+                
+            }, 2000 + Math.random() * 2000); // 2-4 seconds processing time
+        }
+
+        // Session timer
+        function updateSessionTimer() {
+            const elapsed = Date.now() - sessionStartTime;
+            const minutes = Math.floor(elapsed / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            document.getElementById('sessionTime').textContent = `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Generate realistic wallet address
+        function generateRandomWallet() {
+            const chars = '0123456789abcdef';
+            let address = '0x';
+            for (let i = 0; i < 40; i++) {
+                address += chars[Math.floor(Math.random() * chars.length)];
+            }
+            document.getElementById('walletAddress').textContent = address.slice(0, 26) + '...';
+        }
+
+        // Update gas price simulation
+        function updateGasPrice() {
+            const gasPrice = Math.floor(Math.random() * 30 + 15);
+            document.getElementById('gasPrice').textContent = gasPrice + ' gwei';
+        }
+
+        // Update neural activity
+        function updateNeuralActivity() {
+            const activities = ['High', 'Optimal', 'Peak', 'Elevated', 'Intense', 'Focused', 'Creative', 'Active'];
+            const activity = activities[Math.floor(Math.random() * activities.length)];
+            document.getElementById('neuralActivity').textContent = activity;
+        }
+
+        // DAO voting functionality
+        function vote(proposalId, support) {
+            const voteType = support ? 'in favor of' : 'against';
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--accent-green), var(--success));
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                z-index: 10000;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.3s ease-out;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <div style="font-weight: 600;">Vote Cast Successfully!</div>
+                        <div style="font-size: 0.9rem; opacity: 0.9;">Voted ${voteType} proposal ${proposalId}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Update user stats
+            userStats.proposalsVoted++;
+            document.getElementById('proposalsVoted').textContent = userStats.proposalsVoted;
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // NFT interactions
+        function viewNFT(type) {
+            const nftData = {
+                euphoria: { name: 'Euphoric Burst #1247', price: '2.3 BNB', rarity: 'Legendary' },
+                tranquil: { name: 'Tranquil Mind #892', price: '1.7 BNB', rarity: 'Rare' },
+                passionate: { name: 'Passionate Fire #567', price: '3.1 BNB', rarity: 'Epic' },
+                melancholy: { name: 'Melancholic Beauty #334', price: '1.9 BNB', rarity: 'Rare' },
+                inspired: { name: 'Creative Spark #789', price: '2.8 BNB', rarity: 'Epic' },
+                love: { name: 'Pure Love #123', price: '4.2 BNB', rarity: 'Legendary' }
+            };
+            
+            const nft = nftData[type];
+            showModal(`
+                <div style="text-align: center;">
+                    <h3 style="color: var(--accent-pink); margin-bottom: 1rem;">${nft.name}</h3>
+                    <div style="width: 200px; height: 200px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); border-radius: 16px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                        ${type === 'euphoria' ? '✨' : type === 'tranquil' ? '🧘' : type === 'passionate' ? '🔥' : type === 'melancholy' ? '🌙' : type === 'inspired' ? '💡' : '💝'}
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Rarity:</span>
+                            <span style="color: var(--accent-orange);">${nft.rarity}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Current Price:</span>
+                            <span style="color: var(--accent-cyan);">${nft.price}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Created:</span>
+                            <span>From neural emotion capture</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="closeModal()" style="flex: 1; background: transparent; border: 1px solid var(--glass-border); color: var(--text-primary); padding: 0.75rem; border-radius: 8px; cursor: pointer;">Close</button>
+                        <button onclick="purchaseNFT('${type}')" style="flex: 1; background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); border: none; color: white; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Purchase</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function mintCurrentEmotion() {
+            const currentEmotion = document.getElementById('emotionName').textContent;
+            const currentEmoji = document.getElementById('emotionAvatar').textContent;
+            
+            showModal(`
+                <div style="text-align: center;">
+                    <h3 style="color: var(--accent-pink); margin-bottom: 1rem;">Mint Emotional NFT</h3>
+                    <div style="width: 200px; height: 200px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)); border-radius: 16px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                        ${currentEmoji}
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem;">Current Emotion: ${currentEmotion}</div>
+                        <div style="color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.5;">
+                            Your current emotional state will be captured as a unique NFT with neural pattern metadata, timestamp, and authenticity verification.
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Estimated Value:</span>
+                            <span style="color: var(--accent-cyan);">0.5-2.3 BNB</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Minting Fee:</span>
+                            <span style="color: var(--accent-orange);">0.05 BNB + gas</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                        <button onclick="closeModal()" style="flex: 1; background: transparent; border: 1px solid var(--glass-border); color: var(--text-primary); padding: 0.75rem; border-radius: 8px; cursor: pointer;">Cancel</button>
+                        <button onclick="confirmMint()" style="flex: 1; background: linear-gradient(135deg, var(--accent-green), var(--success)); border: none; color: white; padding: 0.75rem; border-radius: 8px; cursor: pointer; font-weight: 600;">Mint NFT</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // Content actions
+        function saveContent() {
+            if (generatedContent.length === 0) {
+                alert('Please generate content first!');
+                return;
+            }
+            
+            showNotification('Content saved to IPFS successfully! Hash: QmX7d9... 📁', 'success');
+        }
+
+        function mintAsNFT() {
+            if (generatedContent.length === 0) {
+                alert('Please generate content first!');
+                return;
+            }
+            
+            showNotification('Content minted as NFT! View on OpenSea 🎨', 'success');
+            userStats.nftsOwned++;
+        }
+
+        function shareContent() {
+            if (generatedContent.length === 0) {
+                alert('Please generate content first!');
+                return;
+            }
+            
+            showNotification('Share link copied to clipboard! 🔗', 'info');
+        }
+
+        // Utility functions
+        function showModal(content) {
+            const modal = document.createElement('div');
+            modal.id = 'modal';
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+                animation: fadeIn 0.3s ease-out;
+            `;
+            
+            const modalContent = document.createElement('div');
+            modalContent.style.cssText = `
+                background: var(--secondary-dark);
+                border: 1px solid var(--glass-border);
+                border-radius: 20px;
+                padding: 2rem;
+                max-width: 500px;
+                width: 90%;
+                max-height: 80vh;
+                overflow-y: auto;
+            `;
+            modalContent.innerHTML = content;
+            
+            modal.appendChild(modalContent);
+            document.body.appendChild(modal);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            if (modal) {
+                modal.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => modal.remove(), 300);
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const colors = {
+                success: 'var(--success)',
+                error: 'var(--error)',
+                warning: 'var(--warning)',
+                info: 'var(--accent-cyan)'
+            };
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, ${colors[type]}, ${colors[type]}CC);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                z-index: 10000;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+                animation: slideIn 0.3s ease-out;
+                max-width: 300px;
