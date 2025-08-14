@@ -1883,3 +1883,443 @@
                 box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
                 animation: slideIn 0.3s ease-out;
                 max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                    <div style="font-size: 0.9rem;">${message}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        function confirmMint() {
+            closeModal();
+            showNotification('NFT minting initiated! Transaction hash: 0xabc123... ⛓️', 'success');
+            
+            // Update stats
+            userStats.nftsOwned++;
+            userStats.tokensEarned += 50; // Minting reward
+            document.getElementById('nftCount').textContent = userStats.nftsOwned;
+            document.getElementById('tokenBalance').textContent = userStats.tokensEarned.toLocaleString();
+        }
+
+        function purchaseNFT(type) {
+            closeModal();
+            showNotification('NFT purchase initiated! Confirm transaction in wallet 💰', 'info');
+            
+            setTimeout(() => {
+                showNotification('NFT purchased successfully! Added to your collection 🎉', 'success');
+                userStats.nftsOwned++;
+                document.getElementById('nftCount').textContent = userStats.nftsOwned;
+            }, 3000);
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: scale(0.9); }
+                to { opacity: 1; transform: scale(1); }
+            }
+            
+            @keyframes fadeOut {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.9); }
+            }
+            
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            
+            @keyframes slideOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+
+            /* Enhanced scrollbar styling */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            
+            ::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+            }
+            
+            ::-webkit-scrollbar-thumb {
+                background: var(--accent-cyan);
+                border-radius: 4px;
+            }
+            
+            ::-webkit-scrollbar-thumb:hover {
+                background: var(--accent-purple);
+            }
+
+            /* Enhanced hover effects */
+            .metric-card:hover {
+                background: rgba(255, 255, 255, 0.08) !important;
+                transform: translateY(-3px) !important;
+                box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2) !important;
+            }
+
+            .blockchain-stat:hover {
+                background: rgba(255, 255, 255, 0.05) !important;
+                transform: translateY(-3px) !important;
+                border-color: var(--accent-cyan) !important;
+            }
+
+            /* Loading animation for generate button */
+            .generate-btn:disabled {
+                background: linear-gradient(135deg, #6b7280, #9ca3af) !important;
+                cursor: not-allowed !important;
+            }
+
+            /* Enhanced emotion avatar animation */
+            .emotion-avatar {
+                background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan)) !important;
+                border: 3px solid rgba(255, 255, 255, 0.2);
+            }
+
+            /* Neural background enhancements */
+            .neural-node:hover {
+                transform: scale(1.5);
+                box-shadow: 0 0 30px var(--accent-cyan);
+            }
+
+            /* Status bar enhancements */
+            .status-item:hover {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 8px;
+                padding: 0.5rem;
+                transform: translateY(-2px);
+                transition: all 0.3s ease;
+            }
+
+            /* Panel hover effects */
+            .emotion-panel:hover,
+            .content-panel:hover,
+            .full-panel:hover {
+                border-color: var(--accent-cyan);
+                box-shadow: 0 20px 40px rgba(6, 182, 212, 0.1);
+                transform: translateY(-2px);
+                transition: all 0.3s ease;
+            }
+
+            /* Vote button enhanced states */
+            .vote-btn:active {
+                transform: scale(0.95);
+            }
+
+            .vote-btn.for:active {
+                background: var(--success) !important;
+            }
+
+            .vote-btn.against:active {
+                background: var(--error) !important;
+            }
+
+            /* NFT card enhanced animations */
+            .nft-card:hover {
+                transform: translateY(-10px) scale(1.02) !important;
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4) !important;
+            }
+
+            .nft-card:active {
+                transform: translateY(-8px) scale(1.01) !important;
+            }
+
+            /* Activity feed enhancements */
+            .activity-item:hover {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+                padding: 1rem;
+                margin: 0 -1rem;
+                transition: all 0.3s ease;
+            }
+
+            /* Control inputs enhanced focus states */
+            .control-select:focus,
+            .control-input:focus {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3) !important;
+            }
+
+            /* Progress bar animations */
+            .progress-bar {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .progress-bar::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+                animation: progressShine 2s ease-in-out infinite;
+            }
+
+            @keyframes progressShine {
+                0% { left: -100%; }
+                100% { left: 100%; }
+            }
+
+            /* Circular progress enhancements */
+            .circle-progress {
+                position: relative;
+                transition: all 0.3s ease;
+            }
+
+            .circle-progress:hover {
+                transform: scale(1.1);
+                filter: brightness(1.2);
+            }
+
+            /* Enhanced typography */
+            .panel-title {
+                background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            }
+
+            /* Wallet address hover effect */
+            .wallet-address:hover {
+                background: rgba(6, 182, 212, 0.2) !important;
+                color: white !important;
+                cursor: pointer;
+                transform: scale(1.02);
+                transition: all 0.3s ease;
+            }
+
+            /* Navigation enhancements */
+            .nav-item::before {
+                content: '';
+                position: absolute;
+                bottom: -5px;
+                left: 50%;
+                width: 0;
+                height: 2px;
+                background: var(--accent-cyan);
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
+
+            .nav-item:hover::before {
+                width: 100%;
+            }
+
+            /* Logo enhancements */
+            .logo-icon:hover {
+                transform: scale(1.1) rotate(360deg);
+                transition: all 0.5s ease;
+                box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            }
+
+            /* User profile hover */
+            .user-profile:hover {
+                background: rgba(255, 255, 255, 0.1) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                transition: all 0.3s ease;
+            }
+
+            /* Content preview enhancements */
+            .content-preview:hover {
+                border-color: var(--accent-purple);
+                box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.1);
+                transition: all 0.3s ease;
+            }
+
+            /* Proposal card enhanced interactions */
+            .proposal-card:hover .proposal-title {
+                color: var(--accent-cyan) !important;
+                transition: color 0.3s ease;
+            }
+
+            /* Enhanced status indicators */
+            .status-indicator:hover .status-dot {
+                transform: scale(1.5);
+                box-shadow: 0 0 15px currentColor;
+                transition: all 0.3s ease;
+            }
+
+            /* Metric circle hover effects */
+            .metric-circle:hover .circle-value {
+                font-size: 1.2em;
+                text-shadow: 0 0 10px var(--accent-cyan);
+                transition: all 0.3s ease;
+            }
+
+            /* Panel icon rotations */
+            .panel-icon:hover {
+                transform: rotateY(180deg);
+                transition: transform 0.5s ease;
+            }
+
+            /* Activity icon pulse on hover */
+            .activity-icon:hover {
+                animation: iconPulse 1s ease-in-out infinite;
+            }
+
+            @keyframes iconPulse {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.2); }
+            }
+
+            /* Enhanced glass morphism effects */
+            .emotion-panel::after,
+            .content-panel::after,
+            .full-panel::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+                border-radius: 20px;
+            }
+
+            .emotion-panel:hover::after,
+            .content-panel:hover::after,
+            .full-panel:hover::after {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Advanced mouse tracking for glass morphism effects
+        document.addEventListener('mousemove', (e) => {
+            const panels = document.querySelectorAll('.emotion-panel, .content-panel, .full-panel');
+            panels.forEach(panel => {
+                const rect = panel.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                panel.style.setProperty('--mouse-x', x + '%');
+                panel.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+
+        // Advanced keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 'Enter':
+                        e.preventDefault();
+                        generateContent();
+                        break;
+                    case 's':
+                        e.preventDefault();
+                        saveContent();
+                        break;
+                    case 'm':
+                        e.preventDefault();
+                        mintAsNFT();
+                        break;
+                }
+            }
+        });
+
+        // Advanced performance monitoring
+        function monitorPerformance() {
+            const observer = new PerformanceObserver((list) => {
+                list.getEntries().forEach((entry) => {
+                    if (entry.entryType === 'measure') {
+                        console.log(`${entry.name}: ${entry.duration}ms`);
+                    }
+                });
+            });
+            observer.observe({ entryTypes: ['measure'] });
+        }
+
+        // Initialize performance monitoring
+        if (typeof PerformanceObserver !== 'undefined') {
+            monitorPerformance();
+        }
+
+        // Advanced error handling with user feedback
+        window.addEventListener('error', (e) => {
+            console.error('Application error:', e.error);
+            showNotification('An error occurred. Our AI is learning from this! 🤖', 'warning');
+        });
+
+        // Advanced Web3 integration simulation
+        function simulateWeb3Integration() {
+            // Simulate blockchain events
+            const events = [
+                'Transaction confirmed on BNB Chain',
+                'Smart contract interaction successful',
+                'NFT metadata updated on IPFS',
+                'Governance proposal created',
+                'Token staking rewards distributed',
+                'DAO voting period started',
+                'Neural data encrypted and stored',
+                'Cross-chain bridge transaction pending'
+            ];
+
+            setInterval(() => {
+                const event = events[Math.floor(Math.random() * events.length)];
+                console.log(`🔗 Blockchain Event: ${event}`);
+                
+                // Occasionally show user-visible notifications for important events
+                if (Math.random() < 0.3) {
+                    showNotification(event + ' 🔗', 'info');
+                }
+            }, 15000);
+        }
+
+        // Initialize Web3 simulation
+        simulateWeb3Integration();
+
+        // Advanced accessibility features
+        function enhanceAccessibility() {
+            // Add ARIA labels and descriptions
+            document.querySelectorAll('.panel-icon').forEach(icon => {
+                icon.setAttribute('aria-hidden', 'true');
+            });
+
+            document.querySelectorAll('button').forEach(button => {
+                if (!button.getAttribute('aria-label')) {
+                    button.setAttribute('aria-label', button.textContent || 'Interactive button');
+                }
+            });
+
+            // Add keyboard navigation hints
+            document.querySelectorAll('.nft-card, .proposal-card').forEach(card => {
+                card.setAttribute('tabindex', '0');
+                card.setAttribute('role', 'button');
+                
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+            });
+        }
+
+        // Initialize accessibility enhancements
+        enhanceAccessibility();
+
+        console.log('🧠 NeuroCre8 Advanced Platform Initialized');
+        console.log('⚡ Features: Emotion AI, Content Generation, Web3 Integration, DAO Governance');
+        console.log('🔗 Blockchain: BNB Smart Chain Integration');
+        console.log('🎨 NFT Marketplace: Emotional Digital Collectibles');
+        console.log('🤖 AI Models: GPT-4 Turbo, Custom Emotion Detection');
+    </script>
+</body>
+</html>
